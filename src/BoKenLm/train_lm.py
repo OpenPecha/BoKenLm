@@ -1,9 +1,8 @@
-import argparse
+
 import os
 import subprocess
 import sentencepiece as spm
-
-from .train_sentence_piece import train_sentencepiece
+from pathlib import Path
 
 
 def train_kenlm(corpus_path, sp_model_path, arpa_path, n_gram=5):
@@ -18,13 +17,13 @@ def train_kenlm(corpus_path, sp_model_path, arpa_path, n_gram=5):
     """
     print("Tokenizing corpus with SentencePiece...")
     sp = spm.SentencePieceProcessor(model_file=sp_model_path)
-    tokenized_path = "tokenized_corpus.txt"
-    with open(corpus_path, 'r', encoding='utf-8') as infile, \
-         open(tokenized_path, 'w', encoding='utf-8') as outfile:
-        for line in infile:
-            tokens = sp.encode_as_pieces(line.strip())
-            outfile.write(" ".join(tokens) + "\n")
-    
+    tokenized_corpus = ''
+    tokenized_path = Path('./data/tokenized_corpus.txt')
+    lines = Path(corpus_path).read_text().splitlines()
+    for line in lines:
+        tokens = sp.encode_as_pieces(line.strip())
+        tokenized_corpus += " ".join(tokens) + "\n"
+    tokenized_path.write_text(tokenized_corpus)
     print("Training KenLM model...")
     kenlm_path = os.path.expanduser('~/.local/bin') # Common install path for pip user installs
     lmplz_path = os.path.join(kenlm_path, 'lmplz')
@@ -36,7 +35,7 @@ def train_kenlm(corpus_path, sp_model_path, arpa_path, n_gram=5):
         print("You can install it via: pip install kenlm-wheel")
         print("Or check its location with: find / -name lmplz 2>/dev/null\n")
         # Clean up the temporary tokenized file before exiting
-        os.remove(tokenized_path)
+        # os.remove(tokenized_path)
         exit(1)
 
     command = [
@@ -57,19 +56,17 @@ def train_kenlm(corpus_path, sp_model_path, arpa_path, n_gram=5):
 def main():
     # --- Configuration ---
     # Path to the clean Tibetan corpus file.
-    corpus_path = "path/to/your/clean_corpus.txt"
+    corpus_path = "data/clean_corpus.txt"
     # Directory to save the trained models.
     output_dir = "models/kenlm"
-    # Vocabulary size for SentencePiece tokenizer.
-    vocab_size = 32000
     # N-gram order for the KenLM model.
     ngram = 5
+    # Sentencepiece model prefix
+    sp_model_prefix = "Bo_sentencepiece"
     # --- End of Configuration ---
 
+    # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
-
-    sp_model_prefix = os.path.join(output_dir, "tokenizer")
-    train_sentencepiece(corpus_path, sp_model_prefix, vocab_size)
 
     sp_model_path = f"{sp_model_prefix}.model"
     arpa_path = os.path.join(output_dir, "lm.arpa")
