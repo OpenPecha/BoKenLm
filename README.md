@@ -1,148 +1,95 @@
-# README
+# BoKenLm
 
-> **Note:** This readme template is based on one from the [Good Docs Project](https://thegooddocsproject.dev). You can find it and a guide to filling it out [here](https://gitlab.com/tgdp/templates/-/tree/main/readme). (_Erase this note after filling out the readme._)
+BoKenLm is a project for training a KenLM n-gram language model for the Tibetan language. It uses SentencePiece for tokenization and KenLM for language model creation. This toolkit is designed to be straightforward for creating language models from a large text corpus.
 
-<h1 align="center">
-  <br>
-  <a href="https://openpecha.org"><img src="https://avatars.githubusercontent.com/u/82142807?s=400&u=19e108a15566f3a1449bafb03b8dd706a72aebcd&v=4" alt="OpenPecha" width="150"></a>
-  <br>
-</h1>
+## Installation
 
-## _Project Name_
-_The project name should match its code's capability so that new users can easily understand what it does._
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd BoKenLm
+    ```
 
-## Owner(s)
+2.  **Create and activate a virtual environment (recommended):**
+    ```bash
+    python3 -m venv .env
+    source .env/bin/activate
+    ```
 
-_Change to the owner(s) of the new repo. (This template's owners are:)_
-- [@ngawangtrinley](https://github.com/ngawangtrinley)
-- [@mikkokotila](https://github.com/mikkokotila)
-- [@evanyerburgh](https://github.com/evanyerburgh)
+3.  **Install dependencies:**
+    The project uses `pyproject.toml` to manage dependencies. Install them using pip:
+    ```bash
+    pip install -e .
+    ```
 
+## Usage
 
-## Table of contents
-<p align="center">
-  <a href="#project-description">Project description</a> •
-  <a href="#who-this-project-is-for">Who this project is for</a> •
-  <a href="#project-dependencies">Project dependencies</a> •
-  <a href="#instructions-for-use">Instructions for use</a> •
-  <a href="#contributing-guidelines">Contributing guidelines</a> •
-  <a href="#additional-documentation">Additional documentation</a> •
-  <a href="#how-to-get-help">How to get help</a> •
-  <a href="#terms-of-use">Terms of use</a>
-</p>
-<hr>
+### Training the Language Model
 
-## Project description
-_Use one of these:_
+The entire training process (SentencePiece tokenization and KenLM model building) is handled by a single script.
 
-With _Project Name_ you can _verb_ _noun_...
+1.  **Prepare your data:**
+    You need a large corpus of clean Tibetan text. The corpus should be in a single `.txt` file with one sentence per line.
 
-_Project Name_ helps you _verb_ _noun_...
+2.  **Configure the training script:**
+    Open the file `src/BoKenLm/train_lm.py` and modify the configuration section inside the `main()` function:
+    ```python
+    # Path to the clean Tibetan corpus file.
+    corpus_path = "path/to/your/clean_corpus.txt"
+    # Directory to save the trained models.
+    output_dir = "models/kenlm"
+    # Vocabulary size for SentencePiece tokenizer.
+    vocab_size = 32000
+    # N-gram order for the KenLM model.
+    ngram = 5
+    ```
+    Update `corpus_path` to point to your text file. You can also adjust `output_dir`, `vocab_size`, and the `ngram` order.
 
+3.  **Run training:**
+    Execute the script from the root directory of the project:
+    ```bash
+    python src/BoKenLm/train_lm.py
+    ```
+    The script will first train a SentencePiece model and save it to your `output_dir`. Then, it will use that model to tokenize the corpus and train a KenLM model, saving the final `lm.arpa` file in the same directory.
 
-## Who this project is for
-This project is intended for _target user_ who wants to _user objective_.
+### Tokenizing Text with the Trained Model
 
+Once training is complete, you can use the generated SentencePiece model (`tokenizer.model` in your output directory) to tokenize new Tibetan text.
 
-## Project dependencies
-Before using _Project Name_, ensure you have:
-* python _version_
-* _Prerequisite 2_
-* _Prerequisite 3..._
+Here is an example Python snippet:
 
+```python
+import sentencepiece as spm
 
-## Instructions for use
-Get started with _Project Name_ by _(write the first step a user needs to start using the project. Use a verb to start.)_.
+# Load the trained model
+sp = spm.SentencePieceProcessor(model_file="models/kenlm/tokenizer.model")
 
+# Example Tibetan text
+tibetan_text = "བཀྲ་ཤིས་བདེ་ལེགས།"
 
-### Install _Project Name_
-1. _Write the step here._ 
+# Encode text into tokens (pieces)
+tokens = sp.encode_as_pieces(tibetan_text)
+print(f"Tokens: {tokens}")
 
-    _Explanatory text here_ 
-    
-    _(Optional: Include a code sample or screenshot that helps your users complete this step.)_
+# Encode text into token IDs
+ids = sp.encode_as_ids(tibetan_text)
+print(f"Token IDs: {ids}")
 
-2. _Write the step here._
- 
-    a. _Substep 1_ 
-    
-    b. _Substep 2_
+# Decode from IDs back to text
+decoded_text = sp.decode_ids(ids)
+print(f"Decoded Text: {decoded_text}")
+```
 
+## Contributing
 
-### Configure _Project Name_
-1. _Write the step here._
-2. _Write the step here._
-
-
-### Run _Project Name_
-1. _Write the step here._
-2. _Write the step here._
-
-
-### Troubleshoot _Project Name_
-1. _Write the step here._
-2. _Write the step here._
-
-<table>
-  <tr>
-   <td>
-    Issue
-   </td>
-   <td>
-    Solution
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-</table>
-
-
-Other troubleshooting supports:
-* _Link to FAQs_
-* _Link to runbooks_
-* _Link to other relevant support information_
-
-
-## Contributing guidelines
 If you'd like to help out, check out our [contributing guidelines](/CONTRIBUTING.md).
 
-
-## Additional documentation
-_Include links and brief descriptions to additional documentation._
-
-For more information:
-* [Reference link 1](#)
-* [Reference link 2](#)
-* [Reference link 3](#)
-
-
 ## How to get help
-* File an issue.
+
+* File an issue on the project's GitHub page.
 * Email us at openpecha[at]gmail.com.
 * Join our [discord](https://discord.com/invite/7GFpPFSTeA).
 
+## License
 
-## Terms of use
-_Project Name_ is licensed under the [MIT License](/LICENSE.md).
+BoKenLm is licensed under the [MIT License](/LICENSE.md).
