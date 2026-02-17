@@ -18,7 +18,8 @@ classifiers = [
 ]
 dependencies = [
     "sentencepiece",
-    "kenlm"
+    "kenlm",
+    "huggingface_hub"
 ]
 
 [project.optional-dependencies]
