@@ -17,9 +17,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "botok",
     "sentencepiece",
     "kenlm",
-    "huggingface_hub"
+    "huggingface_hub",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
