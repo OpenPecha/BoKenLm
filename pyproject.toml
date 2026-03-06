@@ -18,6 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "botok",
+    "botok-rs @ git+https://github.com/OpenPecha/botok-rs.git",
     "sentencepiece",
     "kenlm",
     "huggingface_hub",

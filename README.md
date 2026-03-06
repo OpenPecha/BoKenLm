@@ -22,6 +22,21 @@ BoKenLm is a project for training a KenLM n-gram language model for the Tibetan 
     pip install -e .
     ```
 
+## Training Data
+
+The training data corpus used for building the Tibetan language model is available on the [GitHub Releases](https://github.com/OpenPecha/BoKenLm/releases) page of this repository.
+
+### Downloading the Corpus
+
+1. Go to the [Releases](https://github.com/OpenPecha/BoKenLm/releases) page.
+2. Download the corpus file (`.txt`) from the latest release assets.
+3. Place the downloaded file in the `data/` directory:
+    ```bash
+    mv ~/Downloads/bo_corpus.txt data/bo_corpus.txt
+    ```
+
+> **Note:** The corpus is hosted as a release asset (rather than tracked in Git) due to its large file size. This makes it easy to version the data alongside the code without bloating the repository.
+
 ## Usage
 
 ### Training the Language Model
@@ -29,7 +44,7 @@ BoKenLm is a project for training a KenLM n-gram language model for the Tibetan 
 The entire training process (SentencePiece tokenization and KenLM model building) is handled by a single script.
 
 1.  **Prepare your data:**
-    You need a large corpus of clean Tibetan text. The corpus should be in a single `.txt` file with one sentence per line.
+    Download the training corpus from [GitHub Releases](https://github.com/OpenPecha/BoKenLm/releases) (see above), or prepare your own large corpus of clean Tibetan text. The corpus should be in a single `.txt` file with one sentence per line, placed in the `data/` directory.
 
 2.  **Configure the training script:**
     Open the file `src/BoKenLm/train_lm.py` and modify the configuration section inside the `main()` function:

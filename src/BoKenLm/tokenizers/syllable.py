@@ -1,12 +1,10 @@
-import re
+from botok_rs import SimpleTokenizer as BotokTokenizer
 
 from BoKenLm.tokenizers.base import BaseTokenizer
 
 
 class SyllableTokenizer(BaseTokenizer):
-    """
-    Tokenizes Tibetan text into syllables, keeping tseg (་) and shad (།)
-    attached to the preceding syllable.
+    """Tokenizes Tibetan text into syllables using botok-rs.
 
     Example:
         >>> tok = SyllableTokenizer()
@@ -20,8 +18,16 @@ class SyllableTokenizer(BaseTokenizer):
 
     @property
     def description(self) -> str:
-        return "Tibetan syllable-based (split on tseg `་` / shad `།`)"
+        return "Tibetan syllable-based (botok-rs SimpleTokenizer)"
 
     def tokenize(self, text: str) -> list[str]:
-        tokens = re.findall(r"[^་།]+[་།]?", text)
-        return [t.strip() for t in tokens if t.strip()]
+        """Tokenize a single line of Tibetan text into syllables.
+
+        Args:
+            text: A line of Tibetan text to tokenize.
+
+        Returns:
+            A list of syllable strings.
+        """
+        tokens = BotokTokenizer.tokenize(text)
+        return [token.text for token in tokens if token.text.strip()]

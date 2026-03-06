@@ -42,8 +42,8 @@ def train_with_sentencepiece_tokenizer() -> KenLMTrainer:
 
 if __name__ == "__main__":
     # Switch between tokenizers by commenting/uncommenting:
-    trainer = train_with_syllable_tokenizer()
-    # trainer = train_with_sentencepiece_tokenizer()
+    # trainer = train_with_syllable_tokenizer()
+    trainer = train_with_sentencepiece_tokenizer()
 
     # Upload the trained model to Hugging Face
     uploader = HFUploader(

@@ -101,8 +101,8 @@ class KenLMTrainer:
         tokenized_lines: list[str] = []
         corpus_lines = Path(self.corpus_path).read_text().splitlines()
         for line in tqdm(corpus_lines, desc="Normalizing & tokenizing"):
-            normalized_line = normalize_corpus(line.strip())
-            tokens = self.tokenizer.tokenize(normalized_line)
+            # normalized_line = normalize_corpus(line.strip())
+            tokens = self.tokenizer.tokenize(line)
             tokenized_lines.append(" ".join(tokens))
         self._tokenized_path.parent.mkdir(parents=True, exist_ok=True)
         self._tokenized_path.write_text("\n".join(tokenized_lines) + "\n")
@@ -131,17 +131,30 @@ class KenLMTrainer:
         env = os.environ.copy()
         env["LD_LIBRARY_PATH"] = local_lib + ":" + env.get("LD_LIBRARY_PATH", "")
 
+        # Build prune thresholds: one per n-gram order.
+        # No pruning for unigrams/bigrams; prune singletons for 3-grams+.
+        prune_thresholds = ["0", "0"] + ["1"] * max(0, self.n_gram - 2)
+
         command = [
             lmplz_path,
             "-o", str(self.n_gram),
             "--text", str(self._tokenized_path),
             "--arpa", self._arpa_path,
-            "--prune", "0", "0", "1",
+            "--discount_fallback",
+            "--prune", *prune_thresholds,
         ]
 
-        result = subprocess.run(
-            command, check=True, env=env, stderr=subprocess.PIPE, text=True
-        )
+        try:
+            result = subprocess.run(
+                command, check=True, env=env, stderr=subprocess.PIPE, text=True
+            )
+        except subprocess.CalledProcessError as exc:
+            print(f"\nlmplz failed (exit / signal: {exc.returncode})")
+            if exc.stderr:
+                print("--- lmplz stderr ---")
+                print(exc.stderr)
+            raise
+
         lmplz_log = result.stderr
         print(lmplz_log)
         return lmplz_log
