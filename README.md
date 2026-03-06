@@ -2,6 +2,8 @@
 
 BoKenLm is a project for training a KenLM n-gram language model for the Tibetan language. It uses SentencePiece for tokenization and KenLM for language model creation. This toolkit is designed to be straightforward for creating language models from a large text corpus.
 
+Developed as part of [The BDRC E-Text Corpus project](https://www.bdrc.io/blog/2026/02/28/bdrc-launches-major-initiative-to-build-open-buddhist-datasets-for-ai/).
+
 ## Installation
 
 1.  **Clone the repository:**
