@@ -22,6 +22,7 @@ class KenLMTrainer:
         corpus_path: Path to the training corpus text file.
         output_dir: Directory to save the ARPA model and README.
         n_gram: The n-gram order for the KenLM model.
+        version: Optional version string appended to the model name (e.g. ``"v1.0"`` → ``BoKenlm-syl-v1.0``).
 
     Example:
         >>> from BoKenLm import KenLMTrainer, SyllableTokenizer
@@ -45,14 +46,16 @@ class KenLMTrainer:
         corpus_path: str,
         output_dir: str = "models/kenlm",
         n_gram: int = 5,
+        version: str | None = None,
     ):
         self.tokenizer = tokenizer
         self.corpus_path = corpus_path
         self.output_dir = output_dir
         self.n_gram = n_gram
+        self.version = version
 
         self._tokenized_path = Path("./data/tokenized_corpus.txt")
-        self._model_name = self._derive_model_name(tokenizer.name)
+        self._model_name = self._derive_model_name(tokenizer.name, version)
         self._arpa_path = os.path.join(output_dir, f"{self._model_name}.arpa")
 
     # ------------------------------------------------------------------
@@ -60,15 +63,18 @@ class KenLMTrainer:
     # ------------------------------------------------------------------
 
     @classmethod
-    def _derive_model_name(cls, tokenizer_name: str) -> str:
-        """Return the model name (e.g. 'BoKenlm-syl') for a given tokenizer name."""
+    def _derive_model_name(cls, tokenizer_name: str, version: str | None = None) -> str:
+        """Return the model name (e.g. 'BoKenlm-syl' or 'BoKenlm-syl-v1.0') for a given tokenizer name."""
         suffix = cls._TOKENIZER_SUFFIXES.get(tokenizer_name)
         if suffix is None:
             raise ValueError(
                 f"Unknown tokenizer '{tokenizer_name}'. "
                 f"Supported: {list(cls._TOKENIZER_SUFFIXES)}"
             )
-        return f"BoKenlm-{suffix}"
+        name = f"BoKenlm-{suffix}"
+        if version is not None:
+            name = f"{name}-{version}"
+        return name
 
     # ------------------------------------------------------------------
     # Public API
