@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [
   { name="OpenPecha", email="dev@openpecha.org" },
 ]
-description = "A small example package"
+description = "Tibetan language model training using KenLM with botok tokenization"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -34,5 +34,6 @@ dev = [
 
 
 [project.urls]
-"Homepage" = "https://github.com/OpenPecha/openpecha-project-template"
-"Bug Tracker" = "https://github.com/OpenPecha/openpecha-project-template/issues"
+"Homepage" = "https://github.com/OpenPecha/BoKenLm"
+"Bug Tracker" = "https://github.com/OpenPecha/BoKenLm/issues"
+"Training Data" = "https://github.com/OpenPecha/BoKenLm/releases"
