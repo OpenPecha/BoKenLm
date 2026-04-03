@@ -16,7 +16,7 @@ from BoKenLm import (
 HF_NAMESPACE = "openpecha"
 
 
-VERSION = "v0.2"
+VERSION = "v0.4"
 
 
 def train_with_syllable_tokenizer() -> KenLMTrainer:
@@ -51,8 +51,8 @@ if __name__ == "__main__":
     # trainer = train_with_sentencepiece_tokenizer()
 
     # Upload the trained model to Hugging Face
-    uploader = HFUploader(
-        repo_id=f"{HF_NAMESPACE}/{trainer._model_name}",
-        model_dir=trainer.output_dir,
-    )
-    uploader.upload()
+    # uploader = HFUploader(
+    #     repo_id=f"{HF_NAMESPACE}/{trainer._model_name}",
+    #     model_dir=trainer.output_dir,
+    # )
+    # uploader.upload()

@@ -1,4 +1,4 @@
-from botok_rs import SimpleTokenizer as BotokTokenizer
+from botok.utils.corpus_normalization import normalize_for_perplexity
 
 from BoKenLm.tokenizers.base import BaseTokenizer
 
@@ -29,5 +29,6 @@ class SyllableTokenizer(BaseTokenizer):
         Returns:
             A list of syllable strings.
         """
-        tokens = BotokTokenizer.tokenize(text)
-        return [token.text for token in tokens if token.text.strip()]
+        tokenized_text = normalize_for_perplexity(text=text, space_sskt=True)
+        tokens = tokenized_text.split(" ")
+        return tokens
